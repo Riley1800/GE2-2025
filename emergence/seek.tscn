@@ -13,12 +13,6 @@
 [node name="boid" type="CharacterBody3D" parent="." node_paths=PackedStringArray("target")]
 script = ExtResource("1_g7hsx")
 target = NodePath("../Marker3D")
-force = null
-accel = null
-mass = null
-seek_enabled = null
-arrive_enabled = null
-slowing_distance = null
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="boid"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0)

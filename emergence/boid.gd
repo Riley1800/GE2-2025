@@ -8,10 +8,13 @@ extends CharacterBody3D
 var max_speed = 10
 
 @export var seek_enabled = false
-@export var arrive_enabled = true
+@export var arrive_enabled = false
+@export var flee_enabled = true
 
 @export var arrive_target:Node3D
 @export var slowing_distance = 20
+
+@export var banking:float = 1.0
 
 func arrive(target) -> Vector3:
 	var to_target = target.global_position - global_position
@@ -40,7 +43,21 @@ func calculate():
 	if seek_enabled: 
 		f+= seek(target)
 	if arrive_enabled:
-		f+= arrive() 
+		f+= arrive(arrive_target) 
+	if flee_enabled:
+		f+= flee(target) 
+	
+func flee(target) -> Vector3:
+	var to_target:Vector3 = target.global_position - global_position
+	var desired = to_target.normalized() * max_speed
+	return velocity - desired	
+	
+@export var path:Path3D
+@export var pathIndex:float
+	
+func path_follow():
+	path.get_curve().point_count
+	path.get_curve().get_point_position(pathIndex)
 	
 func _process(delta: float) -> void:
 	
