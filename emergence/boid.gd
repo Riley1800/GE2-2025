@@ -10,6 +10,7 @@ var max_speed = 10
 @export var seek_enabled = false
 @export var arrive_enabled = false
 @export var flee_enabled = true
+@export var path_follow_enabled = true
 
 @export var arrive_target:Node3D
 @export var slowing_distance = 20
@@ -41,11 +42,14 @@ func draw_gizmos():
 func calculate():
 	var f :Vector3 = Vector3.ZERO
 	if seek_enabled: 
-		f+= seek(target)
+		f += seek(target.global_position)
 	if arrive_enabled:
-		f+= arrive(arrive_target) 
+		f += arrive(arrive_target) 
 	if flee_enabled:
-		f+= flee(target) 
+		f += flee(target) 
+	if path_follow_enabled:
+		f += path_follow()
+	return f
 	
 func flee(target) -> Vector3:
 	var to_target:Vector3 = target.global_position - global_position
@@ -53,11 +57,16 @@ func flee(target) -> Vector3:
 	return velocity - desired	
 	
 @export var path:Path3D
-@export var pathIndex:float
+var pathIndex = 0
+var looped = false
 	
 func path_follow():
-	path.get_curve().point_count
-	path.get_curve().get_point_position(pathIndex)
+	
+	var p = path.get_curve().get_point_position(pathIndex)
+	var d = (p - global_position).length()
+	if d < 2:
+		pathIndex = (pathIndex + 1) %  path.get_curve().point_count
+	return seek(p)
 	
 func _process(delta: float) -> void:
 	
