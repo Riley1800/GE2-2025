@@ -1,8 +1,8 @@
 [gd_scene load_steps=6 format=3 uid="uid://cdl7pxjuqykwe"]
 
-[ext_resource type="Script" uid="uid://cks4uwsgfyggy" path="res://boid.gd" id="1_g7hsx"]
-[ext_resource type="Script" uid="uid://ceama6se3ec5g" path="res://FPController.gd" id="2_q6o6m"]
-[ext_resource type="Script" uid="uid://df0wbq4s31n0w" path="res://timer.gd" id="3_tgpyc"]
+[ext_resource type="Script" path="res://boid.gd" id="1_g7hsx"]
+[ext_resource type="Script" path="res://FPController.gd" id="2_q6o6m"]
+[ext_resource type="Script" path="res://timer.gd" id="3_tgpyc"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_q6o6m"]
 
@@ -13,6 +13,12 @@
 [node name="boid" type="CharacterBody3D" parent="." node_paths=PackedStringArray("target")]
 script = ExtResource("1_g7hsx")
 target = NodePath("../Marker3D")
+force = null
+accel = null
+mass = null
+seek_enabled = null
+arrive_enabled = null
+slowing_distance = null
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="boid"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0)
