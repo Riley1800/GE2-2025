@@ -18,6 +18,18 @@ var max_speed = 10
 @export var player_steering_enabled = true
 @export var s_force:float = 10
 
+@export var pursue_enabled = true
+@export var pursue_target:CharacterBody3D
+
+func pursue(pursue_target):
+	var dist = (pursue_target.global_position - global_position).length
+	
+	var time = dist / max_speed
+	
+	var projected = pursue_target.global_position + (pursue_target.velocity * time)
+	
+	return seek(projected)
+
 func player_steering():
 	var s = Input.get_axis("move_back", "move_forward")
 	var f:Vector3 = Vector3.ZERO
