@@ -21,6 +21,10 @@ var max_speed = 10
 @export var pursue_enabled = true
 @export var pursue_target:CharacterBody3D
 
+@export var offset_pursue_enabled = true
+@export var leader:CharacterBody3D
+var offset:Vector3
+
 func pursue(pursue_target):
 	var dist = (pursue_target.global_position - global_position).length
 	
@@ -29,6 +33,18 @@ func pursue(pursue_target):
 	var projected = pursue_target.global_position + (pursue_target.velocity * time)
 	
 	return seek(projected)
+
+func offset_pursue(leader):
+	
+	var world_target = leader.global_transform * offset
+	
+	var dist = (world_target - global_position).length
+	
+	var time = dist / max_speed
+	
+	var projected_for = world_target + (leader.velocity * time)
+	
+	return arrive(projected_for)
 
 func player_steering():
 	var s = Input.get_axis("move_back", "move_forward")
@@ -63,6 +79,9 @@ func seek(target) -> Vector3:
 	
 
 func _ready() -> void:
+	
+	offset = global_position - leader.global_position
+	
 	pass
 	
 func draw_gizmos():
@@ -85,6 +104,8 @@ func calculate():
 		f += follow_path()
 	if player_steering_enabled:
 		f += player_steering()
+	if pursue_enabled:
+		f += seek(pursue_target)
 	return f
 
 @export var path:Path3D
@@ -116,6 +137,7 @@ func _process(delta: float) -> void:
 		var tempUp = transform.basis.y.lerp(Vector3.UP + (accel * banking), delta * 5.0)
 		look_at(global_transform.origin - velocity, tempUp)
 
+	#velocity = clamp()
 	velocity = velocity - (velocity * damping * delta)
 
 		# look_at(global_position + velocity)
