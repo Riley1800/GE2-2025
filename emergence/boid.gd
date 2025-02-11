@@ -14,6 +14,18 @@ var max_speed = 10
 
 @export var banking:float = 1
 
+@export var player_steering_enabled = true
+@export var s_force:float = 10
+
+func player_steering():
+	var s = Input.get_axis("move_back", "move_forward")
+	var f:Vector3 = Vector3.ZERO
+	
+	f = global_basis.z *s*s_force
+	
+	return f
+	pass
+
 func arrive(target) -> Vector3:
 	var to_target = target.global_position - global_position
 	var dist = to_target.length()
@@ -46,6 +58,8 @@ func calculate():
 		f += arrive(arrive_target)
 	if path_follow_enabled:
 		f += follow_path()
+	if player_steering_enabled:
+		f += player_steering()
 	return f
 
 @export var path:Path3D
