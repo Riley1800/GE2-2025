@@ -12,7 +12,8 @@ var max_speed = 10
 @export var arrive_target:Node3D
 @export var slowing_distance = 20
 
-@export var banking:float = 1
+@export var banking:float = 0.1
+@export var damping:float = 0.3
 
 @export var player_steering_enabled = true
 @export var s_force:float = 10
@@ -21,7 +22,15 @@ func player_steering():
 	var s = Input.get_axis("move_back", "move_forward")
 	var f:Vector3 = Vector3.ZERO
 	
-	f = global_basis.z *s*s_force
+	f = global_basis.z * s * s_force
+	
+	var l = Input.get_axis("turn_left", "turn_right")
+	var xz_direction = global_basis.x
+	xz_direction.y = 0
+	xz_direction = xz_direction.normalized()
+	
+	f += xz_direction.x * l * s_force
+
 	
 	return f
 	pass
@@ -49,6 +58,10 @@ func draw_gizmos():
 	DebugDraw3D.draw_arrow(global_position, global_position + velocity, Color.CRIMSON, 0.1)
 	DebugDraw3D.draw_arrow(global_position, global_position + global_basis.y * 10, Color.CRIMSON, 0.1)
 	DebugDraw3D.draw_sphere(arrive_target.global_position, slowing_distance, Color.BURLYWOOD)
+	DebugDraw2D.set_text("velocity: ", velocity)
+
+	DebugDraw3D.draw_arrow(global_position, global_basis.x + force, Color.AQUAMARINE, 0.1)
+
 
 func calculate():
 	var f:Vector3 = Vector3.ZERO	
@@ -90,6 +103,8 @@ func _process(delta: float) -> void:
 		# https://www.cs.toronto.edu/~dt/siggraph97-course/cwr87/
 		var tempUp = transform.basis.y.lerp(Vector3.UP + (accel * banking), delta * 5.0)
 		look_at(global_transform.origin - velocity, tempUp)
+
+	velocity = velocity - (velocity * damping * delta)
 
 		# look_at(global_position + velocity)
 		# global_position += velocity * delta
